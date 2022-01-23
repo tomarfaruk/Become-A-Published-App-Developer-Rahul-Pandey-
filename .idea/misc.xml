@@ -3,6 +3,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/MyApplication/app/src/main/res/drawable/ic_baseline_face_24.xml" value="0.240625" />
+        <entry key="..\:/MyApplication/app/src/main/res/drawable/ic_baseline_local_florist_24.xml" value="0.240625" />
+        <entry key="..\:/MyApplication/app/src/main/res/drawable/ic_baseline_star_24.xml" value="0.240625" />
+        <entry key="..\:/MyApplication/app/src/main/res/drawable/ic_baseline_work_24.xml" value="0.240625" />
         <entry key="..\:/MyApplication/app/src/main/res/layout/activity_main.xml" value="0.16" />
         <entry key="..\:/MyApplication/app/src/main/res/layout/memory_card.xml" value="0.15625" />
       </map>
