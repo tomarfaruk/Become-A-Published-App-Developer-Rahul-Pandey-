@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">My Application</string>
+    <string name="empty"></string>
+    <string name="easyText">Easy (4 x 2)</string>
+    <string name="mediumText">Medium (6 x 3)</string>
+    <string name="hardText">Hard (6 x 4)</string>
+    <string name="mi_custom">Create custom game</string>
+    <string name="mi_chose_size">Chose new size</string>
+    <string name="save">Save</string>
+    <string name="mi_download">Download game</string>
+    <string name="gameName">Game name (example: \'panda_fun\')</string>
 </resources>

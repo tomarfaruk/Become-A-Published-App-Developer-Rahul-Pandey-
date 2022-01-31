@@ -2,17 +2,27 @@ package com.example.myapplication.models
 
 import com.example.myapplication.utils.DEFAULT_ICON
 
-class MemoryGame(private val boardSize: BoardSize) {
+class MemoryGame(
+    private val boardSize: BoardSize,
+    private val createdGameImages: List<String>?,
+    ) {
     val cards:List<MemoryCard>
     var numPairsFound=0
 
     private var numCardFlips = 0
+
     private var indexOfSingleSelectedCard: Int? = null
 
     init {
-        val chosenImages = DEFAULT_ICON.take(boardSize.getNumPairs())
-        val randomizeImages =( chosenImages.shuffled()+chosenImages.shuffled()).shuffled()
-        cards = randomizeImages.map { MemoryCard(it) }
+        if(createdGameImages==null) {
+            val chosenImages = DEFAULT_ICON.take(boardSize.getNumPairs())
+            val randomizeImages = (chosenImages.shuffled() + chosenImages.shuffled()).shuffled()
+            cards = randomizeImages.map { MemoryCard(it) }
+        }
+        else{
+            val randomizeImages = (createdGameImages+createdGameImages).shuffled()
+            cards = randomizeImages.map { MemoryCard(it.hashCode(),it) }
+        }
     }
 
     fun flipCard(position: Int): Boolean {
@@ -62,5 +72,10 @@ class MemoryGame(private val boardSize: BoardSize) {
 
     fun getNumMoves(): Int {
         return numCardFlips / 2
+    }
+
+    fun getNumPairs(): Int {
+        return numCardFlips/2
+
     }
 }

@@ -2,6 +2,9 @@ package com.example.myapplication.utils
 
 import com.example.myapplication.R
 
+const val EXTRA_BOARD_SIZE = "EXTRA_BOARD_SIZE"
+const val EXTRA_GAME_NAME = "EXTRA_GAME_NAME"
+
 val DEFAULT_ICON = listOf(
     R.drawable.ic_baseline_face_24,
     R.drawable.ic_baseline_local_florist_24,

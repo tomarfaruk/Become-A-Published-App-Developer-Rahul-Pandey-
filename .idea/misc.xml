@@ -7,8 +7,14 @@
         <entry key="..\:/MyApplication/app/src/main/res/drawable/ic_baseline_local_florist_24.xml" value="0.240625" />
         <entry key="..\:/MyApplication/app/src/main/res/drawable/ic_baseline_star_24.xml" value="0.240625" />
         <entry key="..\:/MyApplication/app/src/main/res/drawable/ic_baseline_work_24.xml" value="0.240625" />
+        <entry key="..\:/MyApplication/app/src/main/res/drawable/ic_refresh.xml" value="0.12604166666666666" />
+        <entry key="..\:/MyApplication/app/src/main/res/layout/activity_create.xml" value="0.25" />
         <entry key="..\:/MyApplication/app/src/main/res/layout/activity_main.xml" value="0.16" />
+        <entry key="..\:/MyApplication/app/src/main/res/layout/card_image.xml" value="0.10989583333333333" />
+        <entry key="..\:/MyApplication/app/src/main/res/layout/dialog_board_size.xml" value="0.1403985507246377" />
+        <entry key="..\:/MyApplication/app/src/main/res/layout/download_dialoga.xml" value="0.15" />
         <entry key="..\:/MyApplication/app/src/main/res/layout/memory_card.xml" value="0.15625" />
+        <entry key="..\:/MyApplication/app/src/main/res/menu/main_menu.xml" value="0.22447916666666667" />
       </map>
     </option>
   </component>
