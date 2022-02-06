@@ -41,10 +41,10 @@ class CreateActivity : AppCompatActivity() {
     private lateinit var adapter: ImagePickerAdapter
 
     private val storage = Firebase.storage
-    private  val db = Firebase.firestore
+    private val db = Firebase.firestore
 
 
-    companion object{
+    companion object {
         private const val TAG = "CreateActivity"
         private const val PICK_PHOTO_CODE = 665
         private const val REQUEST_PHOTO_CODE = 200
@@ -69,53 +69,60 @@ class CreateActivity : AppCompatActivity() {
 
         etGameName.filters = arrayOf(InputFilter.LengthFilter(MAX_GAME_NAME_LENGTH))
 
-        btnSave.setOnClickListener{
+        btnSave.setOnClickListener {
             saveDataToFirebase()
         }
         etGameName.setText("test")
 
-        etGameName.addTextChangedListener(object : TextWatcher{
+        etGameName.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 btnSave.isEnabled = shouldEnable()
             }
+
             override fun afterTextChanged(p0: Editable?) {}
         })
 
-        adapter = ImagePickerAdapter(this, chosenImageUris, boardSize, object: ImagePickerAdapter.ImageClickListener{
-            override fun onPlaceholderClicked() {
-                if(isPermissionGrand(this@CreateActivity, READ_PHOTOS_PERMISSION)) {
-                    launchIntentPhotos()
-                }else{
-                    requestPermission(this@CreateActivity, READ_PHOTOS_PERMISSION,REQUEST_PHOTO_CODE)
+        adapter = ImagePickerAdapter(
+            this,
+            chosenImageUris,
+            boardSize,
+            object : ImagePickerAdapter.ImageClickListener {
+                override fun onPlaceholderClicked() {
+                    if (isPermissionGrand(this@CreateActivity, READ_PHOTOS_PERMISSION)) {
+                        launchIntentPhotos()
+                    } else {
+                        requestPermission(
+                            this@CreateActivity,
+                            READ_PHOTOS_PERMISSION,
+                            REQUEST_PHOTO_CODE
+                        )
+                    }
                 }
-            }
-        })
+            })
         rvImagePicker.setHasFixedSize(true)
         rvImagePicker.layoutManager = GridLayoutManager(this, boardSize.getWidth())
         rvImagePicker.adapter = adapter
     }
 
     private fun saveDataToFirebase() {
-        btnSave.isEnabled = true
         val customGameName = etGameName.text.toString()
         db.collection("games").document(customGameName).get()
-            .addOnSuccessListener{ document ->
-                if(document !=null && document?.data !=null){
+            .addOnSuccessListener { document ->
+                if (document != null && document?.data != null) {
                     AlertDialog.Builder(this)
                         .setTitle("Name taken")
                         .setMessage("A game already exists with this name $customGameName. Please try another name")
-                        .setPositiveButton("OK",null)
+                        .setPositiveButton("OK", null)
                         .show()
                     btnSave.isEnabled = true
-                }
-                else{
+                } else {
                     handleImageUploading(customGameName)
                 }
-        }.addOnFailureListener{ exception ->
+            }.addOnFailureListener { exception ->
                 Log.e(TAG, "error on saving data")
-                Toast.makeText(this, "Error on saving game",Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Error on saving game", Toast.LENGTH_LONG).show()
                 btnSave.isEnabled = true
             }
     }
@@ -125,29 +132,31 @@ class CreateActivity : AppCompatActivity() {
         val uploadImageUri = mutableListOf<String>()
 
         Log.i(TAG, "saveDataToFirebase")
-        for((index: Int, photoUri: Uri) in chosenImageUris.withIndex()){
+        for ((index: Int, photoUri: Uri) in chosenImageUris.withIndex()) {
             val imageByteArray: ByteArray = getImageByteArray(photoUri)
             val filePath = "images/$gameName/${System.currentTimeMillis()}-${index}.jpg"
             val photoReference = storage.reference.child(filePath)
-            photoReference.putBytes(imageByteArray).continueWithTask{photoUploadTask ->
-                Log.i(TAG,"${photoUploadTask.result?.bytesTransferred}")
+            photoReference.putBytes(imageByteArray).continueWithTask { photoUploadTask ->
+                Log.i(TAG, "${photoUploadTask.result?.bytesTransferred}")
                 photoReference.downloadUrl
-            }.addOnCompleteListener{
-                    downloadTask ->
-                if(!downloadTask.isSuccessful){
-                    Log.e(TAG, "Exception with Firestore ",downloadTask.exception)
+            }.addOnCompleteListener { downloadTask ->
+                if (!downloadTask.isSuccessful) {
+                    Log.e(TAG, "Exception with Firestore ", downloadTask.exception)
                     Toast.makeText(this, "Failed to upload image", Toast.LENGTH_LONG).show()
                     didEncounterError = true
                     return@addOnCompleteListener
                 }
-                if(didEncounterError){
+                if (didEncounterError) {
                     return@addOnCompleteListener
                 }
                 val downloadUri = downloadTask.result.toString()
                 uploadImageUri.add(downloadUri)
-                Log.i(TAG, "Finished upload $downloadUri, uploaded image number ${uploadImageUri.size}")
+                Log.i(
+                    TAG,
+                    "Finished upload $downloadUri, uploaded image number ${uploadImageUri.size}"
+                )
 
-                if(uploadImageUri.size == chosenImageUris.size){
+                if (uploadImageUri.size == chosenImageUris.size) {
                     handleAllImagesUploaded(gameName, uploadImageUri)
                 }
             }
@@ -155,25 +164,23 @@ class CreateActivity : AppCompatActivity() {
     }
 
     private fun handleAllImagesUploaded(gameName: String, imageUri: MutableList<String>) {
-        Log.i(TAG,"all images upload done.................")
+        Log.i(TAG, "all images upload done.................")
         db.collection("games").document(gameName).set(mapOf("images" to imageUri))
-            .addOnCompleteListener{gameCreationTask ->
-                if(!gameCreationTask.isSuccessful){
-                    btnSave.isEnabled = true
-                    Log.e(TAG,"Exception with game creation")
-                    Toast.makeText(this,"Game creation failed",Toast.LENGTH_LONG).show()
+            .addOnCompleteListener { gameCreationTask ->
+                btnSave.isEnabled = true
+                if (!gameCreationTask.isSuccessful) {
+                    Log.e(TAG, "Exception with game creation")
+                    Toast.makeText(this, "Game creation failed", Toast.LENGTH_LONG).show()
                     return@addOnCompleteListener
                 }
                 AlertDialog.Builder(this)
                     .setTitle("$gameName game creation success. Let's play!")
-                    .setPositiveButton("OK"){_,_ ->
+                    .setPositiveButton("OK") { _, _ ->
                         val intent = Intent()
                         intent.putExtra(EXTRA_GAME_NAME, gameName)
-                        setResult(Activity.RESULT_OK,intent)
+                        setResult(Activity.RESULT_OK, intent)
                         finish()
-                        btnSave.isEnabled = true
                     }.show()
-
             }
     }
 
@@ -190,23 +197,23 @@ class CreateActivity : AppCompatActivity() {
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if(requestCode != PICK_PHOTO_CODE || resultCode !=Activity.RESULT_OK || data == null){
-            Log.i(TAG,"User no select photos")
+        if (requestCode != PICK_PHOTO_CODE || resultCode != Activity.RESULT_OK || data == null) {
+            Log.i(TAG, "User no select photos")
             return
         }
         val selectedUri = data.data
         val clipData = data.clipData
 
-        if(clipData!=null){
-            for (i in 0 until clipData.itemCount){
+        if (clipData != null) {
+            for (i in 0 until clipData.itemCount) {
                 val itemClip = clipData.getItemAt(i)
-                if(chosenImageUris.size<numImageRequired){
+                if (chosenImageUris.size < numImageRequired) {
                     chosenImageUris.add(itemClip.uri)
-                }else{
+                } else {
                     break
                 }
             }
-        }else if (selectedUri !=null){
+        } else if (selectedUri != null) {
             chosenImageUris.add(selectedUri)
         }
         adapter.notifyDataSetChanged()
@@ -216,10 +223,9 @@ class CreateActivity : AppCompatActivity() {
     }
 
     private fun shouldEnable(): Boolean {
-        if(chosenImageUris.size != numImageRequired){
+        if (chosenImageUris.size != numImageRequired) {
             return false
-        }
-        else if (etGameName.text.isBlank() || etGameName.text.length < MIN_GAME_NANE_LENGTH){
+        } else if (etGameName.text.isBlank() || etGameName.text.length < MIN_GAME_NANE_LENGTH) {
             return false
         }
         return true
@@ -230,17 +236,22 @@ class CreateActivity : AppCompatActivity() {
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
-        if(requestCode == REQUEST_PHOTO_CODE){
-            if(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+        if (requestCode == REQUEST_PHOTO_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 launchIntentPhotos()
-            }else{
-                Toast.makeText(this, "In order to create custom game, you need to provide photo read permission", Toast.LENGTH_LONG).show()
+            } else {
+                Toast.makeText(
+                    this,
+                    "In order to create custom game, you need to provide photo read permission",
+                    Toast.LENGTH_LONG
+                ).show()
             }
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if(item.itemId ==android.R.id.home){
+        if (item.itemId == android.R.id.home) {
             finish()
             return true
         }
@@ -248,10 +259,10 @@ class CreateActivity : AppCompatActivity() {
     }
 
     private fun launchIntentPhotos() {
-        Log.i(TAG,"click photos")
+        Log.i(TAG, "click photos")
         val intent = Intent(Intent.ACTION_PICK)
         intent.type = "image/*"
-        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true)
-        startActivityForResult(Intent.createChooser(intent,"Choose PICS"), PICK_PHOTO_CODE)
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+        startActivityForResult(Intent.createChooser(intent, "Choose PICS"), PICK_PHOTO_CODE)
     }
 }

@@ -1,8 +1,8 @@
 package com.example.myapplication.models
 
-data class MemoryCard (
-    val identifier:Int,
+data class MemoryCard(
+    val identifier: Int,
     val imageUri: String? = null,
-    var isFaceUp:Boolean=false,
-    var isMatched:Boolean=false,
+    var isFaceUp: Boolean = false,
+    var isMatched: Boolean = false,
 )

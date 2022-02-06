@@ -5,23 +5,22 @@ import com.example.myapplication.utils.DEFAULT_ICON
 class MemoryGame(
     private val boardSize: BoardSize,
     private val createdGameImages: List<String>?,
-    ) {
-    val cards:List<MemoryCard>
-    var numPairsFound=0
+) {
+    val cards: List<MemoryCard>
+    var numPairsFound = 0
 
     private var numCardFlips = 0
 
     private var indexOfSingleSelectedCard: Int? = null
 
     init {
-        if(createdGameImages==null) {
+        if (createdGameImages == null) {
             val chosenImages = DEFAULT_ICON.take(boardSize.getNumPairs())
             val randomizeImages = (chosenImages.shuffled() + chosenImages.shuffled()).shuffled()
             cards = randomizeImages.map { MemoryCard(it) }
-        }
-        else{
-            val randomizeImages = (createdGameImages+createdGameImages).shuffled()
-            cards = randomizeImages.map { MemoryCard(it.hashCode(),it) }
+        } else {
+            val randomizeImages = (createdGameImages + createdGameImages).shuffled()
+            cards = randomizeImages.map { MemoryCard(it.hashCode(), it) }
         }
     }
 
@@ -43,6 +42,7 @@ class MemoryGame(
         card.isFaceUp = !card.isFaceUp
         return foundMatch
     }
+
     private fun checkForMatch(position1: Int, position2: Int): Boolean {
         if (cards[position1].identifier != cards[position2].identifier) {
             return false
@@ -75,7 +75,7 @@ class MemoryGame(
     }
 
     fun getNumPairs(): Int {
-        return numCardFlips/2
+        return numCardFlips / 2
 
     }
 }

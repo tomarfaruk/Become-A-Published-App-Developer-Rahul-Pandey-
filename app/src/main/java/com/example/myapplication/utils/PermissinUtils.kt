@@ -7,9 +7,12 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 
 fun isPermissionGrand(context: Context, permission: String): Boolean {
-    return  ContextCompat.checkSelfPermission(context,permission) == PackageManager.PERMISSION_GRANTED
+    return ContextCompat.checkSelfPermission(
+        context,
+        permission
+    ) == PackageManager.PERMISSION_GRANTED
 }
 
-fun  requestPermission(activity: Activity?, permission: String, requestCode: Int) {
+fun requestPermission(activity: Activity?, permission: String, requestCode: Int) {
     ActivityCompat.requestPermissions(activity!!, arrayOf(permission), requestCode)
 }

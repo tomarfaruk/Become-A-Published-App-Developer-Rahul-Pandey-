@@ -19,5 +19,6 @@ val DEFAULT_ICON = listOf(
     R.drawable.ic_baseline_star_24,
     R.drawable.ic_baseline_work_24,
 )
+
 class constants {
 }
